@@ -137,6 +137,24 @@ public class TextEditorRenderer
 
         ImGui.PopStyleVar();
         ImGui.PopStyleColor();
+
+        var io = ImGui.GetIO();
+        if (ImGui.IsKeyPressed(ImGuiKey.Space) && io.KeyCtrl)
+        {
+            ImGui.OpenPopup("my_select_popup");
+        }
+
+        ImGui.BeginPopup("my_select_popup");
+        ImGui.SetWindowPos(new Vector2(100, 100));
+
+        ImGui.SeparatorText("Autocomplete");
+        if (ImGui.Selectable("Foo"))
+        {
+            ImGui.CloseCurrentPopup();
+        }
+
+        ImGui.Selectable("Bar");
+        ImGui.EndPopup();
     }
 
     void RenderInner()
@@ -171,7 +189,7 @@ public class TextEditorRenderer
 
         Util.Assert(_lineBuffer.Length == 0);
 
-        var contentSize = ImGui.GetWindowContentRegionMax();
+        var contentSize = ImGui.GetContentRegionAvail();
         ImDrawListPtr drawList = ImGui.GetWindowDrawList();
         float longest = _textStart;
 
