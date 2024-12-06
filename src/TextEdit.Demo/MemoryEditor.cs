@@ -3,8 +3,6 @@ using System.Globalization;
 using ImGuiNET;
 using System.Numerics;
 
-#if false
-
 namespace ImGuiNET
 {
     // C# port of ocornut's imgui_memory_editor.h - https://gist.github.com/ocornut/0673e37e54aff644298b
@@ -70,7 +68,7 @@ namespace ImGuiNET
             int line_total_count = (mem_size + Rows - 1) / Rows;
 
             ImGuiNative.igSetNextWindowContentSize(new Vector2(0.0f, line_total_count * line_height));
-            ImGui.BeginChild("##scrolling", new Vector2(0, -ImGuiNative.igGetFrameHeightWithSpacing()), false, 0);
+            ImGui.BeginChild("##scrolling", new Vector2(0, -ImGuiNative.igGetFrameHeightWithSpacing()));
 
             ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0, 0));
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0));
@@ -95,10 +93,10 @@ namespace ImGuiNET
 
             if (DataEditingAddr != -1)
             {
-                if (ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGuiKey.UpArrow)) && DataEditingAddr >= Rows) { DataEditingAddr -= Rows; DataEditingTakeFocus = true; }
-                else if (ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGuiKey.DownArrow)) && DataEditingAddr < mem_size - Rows) { DataEditingAddr += Rows; DataEditingTakeFocus = true; }
-                else if (ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGuiKey.LeftArrow)) && DataEditingAddr > 0) { DataEditingAddr -= 1; DataEditingTakeFocus = true; }
-                else if (ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGuiKey.RightArrow)) && DataEditingAddr < mem_size - 1) { DataEditingAddr += 1; DataEditingTakeFocus = true; }
+                if (ImGui.IsKeyPressed(ImGuiKey.UpArrow) && DataEditingAddr >= Rows) { DataEditingAddr -= Rows; DataEditingTakeFocus = true; }
+                else if (ImGui.IsKeyPressed(ImGuiKey.DownArrow) && DataEditingAddr < mem_size - Rows) { DataEditingAddr += Rows; DataEditingTakeFocus = true; }
+                else if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) && DataEditingAddr > 0) { DataEditingAddr -= 1; DataEditingTakeFocus = true; }
+                else if (ImGui.IsKeyPressed(ImGuiKey.RightArrow) && DataEditingAddr < mem_size - 1) { DataEditingAddr += 1; DataEditingTakeFocus = true; }
             }
             if ((DataEditingAddr / Rows) != (data_editing_addr_backup / Rows))
             {
@@ -204,7 +202,7 @@ namespace ImGuiNET
 
             ImGuiNative.igAlignTextToFramePadding();
             ImGui.PushItemWidth(50);
-            ImGui.PushAllowKeyboardFocus(true);
+            // ImGui.SetKeyboardFocusHere(0);
             int rows_backup = Rows;
             if (ImGui.DragInt("##rows", ref Rows, 0.2f, 4, 32, "%.0f rows"))
             {
@@ -213,7 +211,7 @@ namespace ImGuiNET
                 new_window_size.X += (Rows - rows_backup) * (cell_width + glyph_width);
                 ImGui.SetWindowSize(new_window_size);
             }
-            ImGui.PopAllowKeyboardFocus();
+            // TODO ImGui.PopAllowKeyboardFocus();
             ImGui.PopItemWidth();
             ImGui.SameLine();
             ImGui.Text(string.Format(" Range {0}..{1} ", FixedHex(base_display_addr, addr_digits_count),
@@ -266,9 +264,11 @@ namespace ImGuiNET
             if (ItemsHeight > 0.0f)
             {
                 int dispStart, dispEnd;
-                ImGuiNative.igCalcListClipping(ItemsCount, ItemsHeight, &dispStart, &dispEnd);
-                DisplayStart = dispStart;
-                DisplayEnd = dispEnd;
+                var clipper = ImGuiNative.ImGuiListClipper_ImGuiListClipper();
+                ImGuiNative.ImGuiListClipper_Begin(clipper, ItemsCount, ItemsHeight);
+                ImGuiNative.ImGuiListClipper_Step(clipper);
+                DisplayStart = clipper->DisplayStart;
+                DisplayEnd = clipper->DisplayEnd;
                 if (DisplayStart > 0)
                     //SetCursorPosYAndSetupDummyPrevLine(StartPosY + DisplayStart * ItemsHeight, ItemsHeight); // advance cursor
                     ImGuiNative.igSetCursorPosY(StartPosY + DisplayStart * ItemsHeight);
@@ -277,4 +277,3 @@ namespace ImGuiNET
         }
     }
 }
-#endif

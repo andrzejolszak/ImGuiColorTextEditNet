@@ -13,11 +13,13 @@ namespace ImGuiNET
 {
     class Program
     {
+        const bool TEXT_EDIT_DEMO = true;
+
         private static Sdl2Window _window;
         private static GraphicsDevice _gd;
         private static CommandList _cl;
         private static ImGuiController _controller;
-        // private static MemoryEditor _memoryEditor;
+        private static MemoryEditor _memoryEditor;
 
         // UI state
         private static float _f = 0.0f;
@@ -25,8 +27,8 @@ namespace ImGuiNET
         private static int _dragInt = 0;
         private static Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
         private static bool _showImGuiDemoWindow = true;
-        private static bool _showAnotherWindow = false;
-        private static bool _showMemoryEditor = false;
+        private static bool _showAnotherWindow = true;
+        private static bool _showMemoryEditor = true;
         private static byte[] _memoryEditorData;
         private static uint s_tab_bar_flags = (uint)ImGuiTabBarFlags.Reorderable;
         static bool[] s_opened = { true, true, true, true }; // Persistent user state
@@ -47,14 +49,15 @@ namespace ImGuiNET
                 _controller.WindowResized(_window.Width, _window.Height);
             };
             _controller = new ImGuiController(_gd, _gd.MainSwapchain.Framebuffer.OutputDescription, _window.Width, _window.Height);
-            // _memoryEditor = new MemoryEditor();
+            _memoryEditor = new MemoryEditor();
             Random random = new Random();
 
             var stopwatch = Stopwatch.StartNew();
             float deltaTime = 0f;
 
             // https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
-            bool TEXT_EDIT_DEMO = true;
+            // https://traineq.org/implot_demo/src/implot_demo.html
+            // Builder: https://github.com/tpecholt/imrad
 
             _cl = _gd.ResourceFactory.CreateCommandList();
 
@@ -329,7 +332,7 @@ void main(int argc, char **argv) {
             if (_showMemoryEditor)
             {
                 ImGui.Text("Memory editor currently supported.");
-                // _memoryEditor.Draw("Memory Editor", _memoryEditorData, _memoryEditorData.Length);
+                _memoryEditor.Draw("Memory Editor", _memoryEditorData, _memoryEditorData.Length);
             }
             
             // On .NET Standard 2.1 or greater, you can use ReadOnlySpan<char> instead of string to prevent allocations.
