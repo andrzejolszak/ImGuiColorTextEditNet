@@ -153,6 +153,8 @@ void main(int argc, char **argv) {
 
                 io.FontGlobalScale = 1.0f;
 
+                TextFitersTest filtersTest = new TextFitersTest();
+
                 while (_window.Exists)
                 {
                     var input = _window.PumpEvents();
@@ -166,9 +168,14 @@ void main(int argc, char **argv) {
                     ImGui.SetNextWindowPos(new Vector2(0, 0));
                     ImGui.SetNextWindowSize(new Vector2(_window.Width, _window.Height));
 
+                    // filtersTest.Draw();
+                    // DropdownBoxUtility.DrawDropdownBox();
+                    // var namespaceForEdit = "foobarrr";
+                    // InputWithTypeAheadSearch.Draw("##namespace", ref namespaceForEdit, new List<string> { "a", "aab", "abab", "car" });
+
                     // FONT:
                     // ImGui.PushFont(font);
-
+                    /*
                     ImGui.Begin("Demo");
 
                     if (ImGui.Button("Reset"))
@@ -187,7 +194,7 @@ void main(int argc, char **argv) {
                     editor.Render("EditWindow");
 
                     ImGui.End();
-
+                    */
                     // FONT:
                     // ImGui.PopFont();
 
